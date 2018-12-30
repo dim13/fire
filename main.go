@@ -96,7 +96,7 @@ func (dc *drawContext) update(screen *ebiten.Image) error {
 		for y := 1; y < r.Max.Y; y++ {
 			z := rand.Intn(3)
 			n := dc.img.ColorIndexAt(x, y-1)
-			if n > 0 && z&1 == 0 {
+			if n > 0 && z == 0 {
 				n--
 			}
 			dc.img.SetColorIndex(x-z+1, y, n)
