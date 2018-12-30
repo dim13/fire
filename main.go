@@ -95,6 +95,7 @@ func (dc *drawContext) update(screen *ebiten.Image) error {
 
 func main() {
 	dc := newDrawContext(screenWidth, screenHeight)
+	ebiten.SetRunnableInBackground(true)
 	if err := ebiten.Run(dc.update, screenWidth, screenHeight, scale, "Fire"); err != nil {
 		log.Fatal(err)
 	}
