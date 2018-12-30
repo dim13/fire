@@ -72,7 +72,7 @@ func newDrawContext(x, y int) *drawContext {
 	return &drawContext{img: img}
 }
 
-func (dc *drawContext) toggle() {
+func (dc *drawContext) toggle() *drawContext {
 	var c uint8
 	if !dc.isOn {
 		c = uint8(len(palette) - 1)
@@ -81,6 +81,7 @@ func (dc *drawContext) toggle() {
 		dc.img.SetColorIndex(x, 0, c)
 	}
 	dc.isOn = !dc.isOn
+	return dc
 }
 
 func (dc *drawContext) update(screen *ebiten.Image) error {
@@ -109,8 +110,7 @@ func (dc *drawContext) update(screen *ebiten.Image) error {
 }
 
 func main() {
-	dc := newDrawContext(screenWidth, screenHeight)
-	dc.toggle()
+	dc := newDrawContext(screenWidth, screenHeight).toggle()
 	ebiten.SetRunnableInBackground(true)
 	if err := ebiten.Run(dc.update, screenWidth, screenHeight, scale, "Fire"); err != nil {
 		log.Fatal(err)
