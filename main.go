@@ -3,6 +3,7 @@
 package main
 
 import (
+	"errors"
 	"fmt"
 	"image"
 	"image/color"
@@ -62,32 +63,47 @@ const (
 )
 
 type drawContext struct {
-	buf *image.Paletted
+	img  *image.Paletted
+	isOn bool
 }
 
 func newDrawContext(x, y int) *drawContext {
 	rand.Seed(time.Now().UnixNano())
 	img := image.NewPaletted(image.Rect(0, 0, x, y), palette)
-	for x := 0; x < screenWidth; x++ {
-		img.SetColorIndex(x, 0, uint8(len(palette)-1))
+	return &drawContext{img: img}
+}
+
+func (dc *drawContext) toggle() {
+	var c uint8
+	if !dc.isOn {
+		c = uint8(len(palette) - 1)
 	}
-	return &drawContext{buf: img}
+	for x := 0; x < screenWidth; x++ {
+		dc.img.SetColorIndex(x, 0, c)
+	}
+	dc.isOn = !dc.isOn
 }
 
 func (dc *drawContext) update(screen *ebiten.Image) error {
+	if ebiten.IsKeyPressed(ebiten.KeyQ) {
+		return errors.New("exit")
+	}
+	if ebiten.IsKeyPressed(ebiten.KeySpace) {
+		dc.toggle()
+	}
 	r := screen.Bounds()
 	for x := 0; x < r.Max.X; x++ {
 		for y := 1; y < r.Max.Y; y++ {
 			z := rand.Intn(3)
-			n := dc.buf.ColorIndexAt(x, y-1)
+			n := dc.img.ColorIndexAt(x, y-1)
 			if n > 0 && z&1 == 0 {
 				n--
 			}
-			dc.buf.SetColorIndex(x-z+1, y, n)
+			dc.img.SetColorIndex(x-z+1, y, n)
 		}
 	}
 	if !ebiten.IsDrawingSkipped() {
-		screen.ReplacePixels(imaging.FlipV(dc.buf).Pix)
+		screen.ReplacePixels(imaging.FlipV(dc.img).Pix)
 		ebitenutil.DebugPrint(screen, fmt.Sprintf("TPS: %0.2f", ebiten.CurrentTPS()))
 	}
 	return nil
@@ -95,6 +111,7 @@ func (dc *drawContext) update(screen *ebiten.Image) error {
 
 func main() {
 	dc := newDrawContext(screenWidth, screenHeight)
+	dc.toggle()
 	ebiten.SetRunnableInBackground(true)
 	if err := ebiten.Run(dc.update, screenWidth, screenHeight, scale, "Fire"); err != nil {
 		log.Fatal(err)
