@@ -14,6 +14,7 @@ import (
 	"github.com/disintegration/imaging"
 	"github.com/hajimehoshi/ebiten"
 	"github.com/hajimehoshi/ebiten/ebitenutil"
+	"github.com/hajimehoshi/ebiten/inpututil"
 )
 
 var palette = color.Palette{
@@ -87,11 +88,11 @@ func (dc *drawContext) toggle() *drawContext {
 
 func (dc *drawContext) update(screen *ebiten.Image) error {
 	switch {
-	case ebiten.IsKeyPressed(ebiten.KeyQ):
+	case inpututil.IsKeyJustPressed(ebiten.KeyQ):
 		return errors.New("exit")
-	case ebiten.IsKeyPressed(ebiten.KeyD):
+	case inpututil.IsKeyJustPressed(ebiten.KeyD):
 		dc.debug = !dc.debug
-	case ebiten.IsKeyPressed(ebiten.KeySpace):
+	case inpututil.IsKeyJustPressed(ebiten.KeySpace):
 		dc.toggle()
 	}
 	r := screen.Bounds()
