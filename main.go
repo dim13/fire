@@ -62,8 +62,9 @@ const (
 )
 
 type drawContext struct {
-	img  *image.Paletted
-	isOn bool
+	img   *image.Paletted
+	isOn  bool
+	debug bool
 }
 
 func newDrawContext(x, y int) *drawContext {
@@ -85,10 +86,12 @@ func (dc *drawContext) toggle() *drawContext {
 }
 
 func (dc *drawContext) update(screen *ebiten.Image) error {
-	if ebiten.IsKeyPressed(ebiten.KeyQ) {
+	switch {
+	case ebiten.IsKeyPressed(ebiten.KeyQ):
 		return errors.New("exit")
-	}
-	if ebiten.IsKeyPressed(ebiten.KeySpace) {
+	case ebiten.IsKeyPressed(ebiten.KeyD):
+		dc.debug = !dc.debug
+	case ebiten.IsKeyPressed(ebiten.KeySpace):
 		dc.toggle()
 	}
 	r := screen.Bounds()
@@ -104,7 +107,9 @@ func (dc *drawContext) update(screen *ebiten.Image) error {
 	}
 	if !ebiten.IsDrawingSkipped() {
 		screen.ReplacePixels(imaging.FlipV(dc.img).Pix)
-		ebitenutil.DebugPrint(screen, fmt.Sprintf("TPS: %0.2f", ebiten.CurrentTPS()))
+		if dc.debug {
+			ebitenutil.DebugPrint(screen, fmt.Sprintf("TPS: %0.2f", ebiten.CurrentTPS()))
+		}
 	}
 	return nil
 }
