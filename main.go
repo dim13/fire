@@ -95,9 +95,8 @@ func (dc *drawContext) update(screen *ebiten.Image) error {
 	case inpututil.IsKeyJustPressed(ebiten.KeySpace):
 		dc.toggle()
 	}
-	r := screen.Bounds()
-	for x := 0; x < r.Max.X; x++ {
-		for y := 1; y < r.Max.Y; y++ {
+	for x := 0; x < dc.img.Bounds().Max.X; x++ {
+		for y := 1; y < dc.img.Bounds().Max.Y; y++ {
 			z := rand.Intn(3)
 			n := dc.img.ColorIndexAt(x, y-1)
 			if n > 0 && z == 0 {
