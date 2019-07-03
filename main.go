@@ -4,6 +4,7 @@ package main
 
 import (
 	"errors"
+	"flag"
 	"fmt"
 	"image"
 	"image/color"
@@ -56,12 +57,6 @@ var palette = color.Palette{
 	color.RGBA{0xff, 0xff, 0xff, 0xff},
 }
 
-const (
-	screenWidth  = 320
-	screenHeight = 200
-	scale        = 2
-)
-
 type drawContext struct {
 	img   *image.Paletted
 	isOn  bool
@@ -79,11 +74,26 @@ func (dc *drawContext) toggle() *drawContext {
 	if !dc.isOn {
 		c = uint8(len(palette) - 1)
 	}
-	for x := 0; x < screenWidth; x++ {
+	r := dc.img.Bounds().Max
+	for x := 0; x < r.X; x++ {
 		dc.img.SetColorIndex(x, 0, c)
 	}
 	dc.isOn = !dc.isOn
 	return dc
+}
+
+func drawTo(img *image.Paletted) {
+	r := img.Bounds().Max
+	for x := 0; x < r.X; x++ {
+		for y := 1; y < r.Y; y++ {
+			z := rand.Intn(3)
+			n := img.ColorIndexAt(x, y-1)
+			if n > 0 && z == 1 {
+				n--
+			}
+			img.SetColorIndex(x-z+1, y, n)
+		}
+	}
 }
 
 func (dc *drawContext) update(screen *ebiten.Image) error {
@@ -95,16 +105,7 @@ func (dc *drawContext) update(screen *ebiten.Image) error {
 	case inpututil.IsKeyJustPressed(ebiten.KeySpace):
 		dc.toggle()
 	}
-	for x := 0; x < dc.img.Bounds().Max.X; x++ {
-		for y := 1; y < dc.img.Bounds().Max.Y; y++ {
-			z := rand.Intn(3)
-			n := dc.img.ColorIndexAt(x, y-1)
-			if n > 0 && z == 1 {
-				n--
-			}
-			dc.img.SetColorIndex(x-z+1, y, n)
-		}
-	}
+	drawTo(dc.img)
 	if !ebiten.IsDrawingSkipped() {
 		screen.ReplacePixels(imaging.FlipV(dc.img).Pix)
 		if dc.debug {
@@ -115,9 +116,14 @@ func (dc *drawContext) update(screen *ebiten.Image) error {
 }
 
 func main() {
-	dc := newDrawContext(screenWidth, screenHeight).toggle()
+	width := flag.Int("width", 320, "screen width")
+	height := flag.Int("height", 200, "screen height")
+	scale := flag.Float64("scale", 2.0, "scale")
+	flag.Parse()
+
+	dc := newDrawContext(*width, *height).toggle()
 	ebiten.SetRunnableInBackground(true)
-	if err := ebiten.Run(dc.update, screenWidth, screenHeight, scale, "Fire"); err != nil {
+	if err := ebiten.Run(dc.update, *width, *height, *scale, "Fire"); err != nil {
 		log.Fatal(err)
 	}
 }
