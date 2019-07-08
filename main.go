@@ -5,7 +5,6 @@ package main
 import (
 	"errors"
 	"flag"
-	"fmt"
 	"image"
 	"image/color"
 	"log"
@@ -14,7 +13,6 @@ import (
 
 	"github.com/disintegration/imaging"
 	"github.com/hajimehoshi/ebiten"
-	"github.com/hajimehoshi/ebiten/ebitenutil"
 	"github.com/hajimehoshi/ebiten/inpututil"
 )
 
@@ -58,9 +56,8 @@ var palette = color.Palette{
 }
 
 type drawContext struct {
-	img   *image.Paletted
-	isOn  bool
-	debug bool
+	img *image.Paletted
+	on  bool
 }
 
 func newDrawContext(x, y int) *drawContext {
@@ -69,16 +66,19 @@ func newDrawContext(x, y int) *drawContext {
 	return &drawContext{img: img}
 }
 
+func seed(img *image.Paletted, c int) {
+	for x := 0; x < img.Bounds().Max.X; x++ {
+		img.SetColorIndex(x, 0, uint8(c))
+	}
+}
+
 func (dc *drawContext) toggle() *drawContext {
-	var c uint8
-	if !dc.isOn {
-		c = uint8(len(palette) - 1)
+	if dc.on {
+		seed(dc.img, 0)
+	} else {
+		seed(dc.img, len(palette)-1)
 	}
-	r := dc.img.Bounds().Max
-	for x := 0; x < r.X; x++ {
-		dc.img.SetColorIndex(x, 0, c)
-	}
-	dc.isOn = !dc.isOn
+	dc.on = !dc.on
 	return dc
 }
 
@@ -100,17 +100,12 @@ func (dc *drawContext) update(screen *ebiten.Image) error {
 	switch {
 	case inpututil.IsKeyJustPressed(ebiten.KeyQ):
 		return errors.New("exit")
-	case inpututil.IsKeyJustPressed(ebiten.KeyD):
-		dc.debug = !dc.debug
 	case inpututil.IsKeyJustPressed(ebiten.KeySpace):
 		dc.toggle()
 	}
 	drawTo(dc.img)
 	if !ebiten.IsDrawingSkipped() {
 		screen.ReplacePixels(imaging.FlipV(dc.img).Pix)
-		if dc.debug {
-			ebitenutil.DebugPrint(screen, fmt.Sprintf("TPS: %0.2f", ebiten.CurrentTPS()))
-		}
 	}
 	return nil
 }
