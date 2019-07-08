@@ -57,12 +57,13 @@ var palette = color.Palette{
 
 type drawContext struct {
 	img *image.Paletted
-	on  bool
+	off bool
 }
 
 func newDrawContext(x, y int) *drawContext {
 	rand.Seed(time.Now().UnixNano())
 	img := image.NewPaletted(image.Rect(0, 0, x, y), palette)
+	seed(img, len(palette)-1)
 	return &drawContext{img: img}
 }
 
@@ -72,14 +73,13 @@ func seed(img *image.Paletted, c int) {
 	}
 }
 
-func (dc *drawContext) toggle() *drawContext {
-	if dc.on {
-		seed(dc.img, 0)
-	} else {
+func (dc *drawContext) toggle() {
+	if dc.off {
 		seed(dc.img, len(palette)-1)
+	} else {
+		seed(dc.img, 0)
 	}
-	dc.on = !dc.on
-	return dc
+	dc.off = !dc.off
 }
 
 func drawTo(img *image.Paletted) {
@@ -116,7 +116,7 @@ func main() {
 	scale := flag.Float64("scale", 2.0, "scale")
 	flag.Parse()
 
-	dc := newDrawContext(*width, *height).toggle()
+	dc := newDrawContext(*width, *height)
 	ebiten.SetRunnableInBackground(true)
 	if err := ebiten.Run(dc.update, *width, *height, *scale, "Fire"); err != nil {
 		log.Fatal(err)
