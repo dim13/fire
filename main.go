@@ -7,11 +7,11 @@ import (
 	"flag"
 	"image"
 	"image/color"
+	"image/draw"
 	"log"
 	"math/rand"
 	"time"
 
-	"github.com/disintegration/imaging"
 	"github.com/hajimehoshi/ebiten"
 	"github.com/hajimehoshi/ebiten/inpututil"
 )
@@ -60,6 +60,12 @@ type drawContext struct {
 	off bool
 }
 
+func (dc drawContext) pix() []byte {
+	img := image.NewRGBA(dc.img.Rect)
+	draw.Draw(img, dc.img.Rect, dc.img, image.ZP, draw.Src)
+	return img.Pix
+}
+
 func newDrawContext(x, y int) *drawContext {
 	rand.Seed(time.Now().UnixNano())
 	img := image.NewPaletted(image.Rect(0, 0, x, y), palette)
@@ -68,8 +74,9 @@ func newDrawContext(x, y int) *drawContext {
 }
 
 func seed(img *image.Paletted, c int) {
-	for x := 0; x < img.Bounds().Max.X; x++ {
-		img.SetColorIndex(x, 0, uint8(c))
+	r := img.Bounds().Max
+	for x := 0; x < r.X; x++ {
+		img.SetColorIndex(x, r.Y-1, uint8(c))
 	}
 }
 
@@ -85,13 +92,13 @@ func (dc *drawContext) toggle() {
 func drawTo(img *image.Paletted) {
 	r := img.Bounds().Max
 	for x := 0; x < r.X; x++ {
-		for y := 1; y < r.Y; y++ {
+		for y := r.Y - 1; y >= 0; y-- {
 			z := rand.Intn(3)
-			n := img.ColorIndexAt(x, y-1)
+			n := img.ColorIndexAt(x, y)
 			if n > 0 && z == 1 {
 				n--
 			}
-			img.SetColorIndex(x-z+1, y, n)
+			img.SetColorIndex(x-z+1, y-1, n)
 		}
 	}
 }
@@ -105,7 +112,7 @@ func (dc *drawContext) update(screen *ebiten.Image) error {
 	}
 	drawTo(dc.img)
 	if !ebiten.IsDrawingSkipped() {
-		screen.ReplacePixels(imaging.FlipV(dc.img).Pix)
+		screen.ReplacePixels(dc.pix())
 	}
 	return nil
 }
