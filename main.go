@@ -16,8 +16,10 @@ import (
 )
 
 type drawContext struct {
-	img *image.Paletted
-	off bool
+	img   *image.Paletted
+	off   bool
+	black int
+	white int
 }
 
 func pixels(p *image.Paletted) []byte {
@@ -28,9 +30,13 @@ func pixels(p *image.Paletted) []byte {
 
 func newDrawContext(x, y int) *drawContext {
 	rand.Seed(time.Now().UnixNano())
-	img := image.NewPaletted(image.Rect(0, 0, x, y), palette)
-	seed(img, len(palette)-1)
-	return &drawContext{img: img}
+	dc := drawContext{
+		img:   image.NewPaletted(image.Rect(0, 0, x, y), palette),
+		black: 0,
+		white: len(palette) - 1,
+	}
+	seed(dc.img, dc.white)
+	return &dc
 }
 
 func seed(img *image.Paletted, c int) {
@@ -42,9 +48,9 @@ func seed(img *image.Paletted, c int) {
 
 func (dc *drawContext) toggle() {
 	if dc.off {
-		seed(dc.img, len(palette)-1)
+		seed(dc.img, dc.white)
 	} else {
-		seed(dc.img, 0)
+		seed(dc.img, dc.black)
 	}
 	dc.off = !dc.off
 }
