@@ -58,13 +58,13 @@ func (dc *drawContext) toggle() {
 func drawTo(img *image.Paletted) {
 	r := img.Bounds().Max
 	for x := 0; x < r.X; x++ {
-		for y := r.Y - 1; y >= 0; y-- {
-			z := rand.Intn(3)
+		for y := r.Y - 1; y > 0; y-- {
+			z := rand.Intn(3) - 1 // -1, 0, 1
 			n := img.ColorIndexAt(x, y)
-			if n > 0 && z == 1 {
-				n--
+			if n > 0 && z == 0 {
+				n-- // next color
 			}
-			img.SetColorIndex(x-z+1, y-1, n)
+			img.SetColorIndex(x+z, y-1, n)
 		}
 	}
 }
