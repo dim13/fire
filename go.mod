@@ -1,6 +1,6 @@
 module github.com/dim13/fire
 
-go 1.12
+go 1.13
 
 require (
 	github.com/gopherjs/gopherjs v0.0.0-20190915194858-d3ddacdb130f // indirect
