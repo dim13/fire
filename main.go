@@ -22,12 +22,6 @@ type drawContext struct {
 	white int
 }
 
-func pixels(p *image.Paletted) []byte {
-	img := image.NewRGBA(p.Rect)
-	draw.Draw(img, p.Rect, p, image.ZP, draw.Src)
-	return img.Pix
-}
-
 func newDrawContext(x, y int) *drawContext {
 	rand.Seed(time.Now().UnixNano())
 	dc := drawContext{
@@ -55,18 +49,19 @@ func (dc *drawContext) toggle() {
 	}
 }
 
-func drawTo(img *image.Paletted) {
-	r := img.Bounds().Max
+func (dc *drawContext) draw() image.Image {
+	r := dc.img.Bounds().Max
 	for x := 0; x < r.X; x++ {
 		for y := r.Y - 1; y > 0; y-- {
 			z := rand.Intn(3) - 1 // -1, 0, 1
-			n := img.ColorIndexAt(x, y)
+			n := dc.img.ColorIndexAt(x, y)
 			if n > 0 && z == 0 {
 				n-- // next color
 			}
-			img.SetColorIndex(x+z, y-1, n)
+			dc.img.SetColorIndex(x+z, y-1, n)
 		}
 	}
+	return dc.img
 }
 
 func (dc *drawContext) update(screen *ebiten.Image) error {
@@ -76,9 +71,8 @@ func (dc *drawContext) update(screen *ebiten.Image) error {
 	case inpututil.IsKeyJustPressed(ebiten.KeySpace):
 		dc.toggle()
 	}
-	drawTo(dc.img)
 	if !ebiten.IsDrawingSkipped() {
-		screen.ReplacePixels(pixels(dc.img))
+		draw.Draw(screen, screen.Bounds(), dc.draw(), image.ZP, draw.Src)
 	}
 	return nil
 }
