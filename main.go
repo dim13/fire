@@ -49,7 +49,7 @@ func (dc *drawContext) toggle() {
 	}
 }
 
-func (dc *drawContext) draw() image.Image {
+func (dc *drawContext) drawTo(dst draw.Image) {
 	r := dc.img.Bounds().Max
 	for x := 0; x < r.X; x++ {
 		for y := r.Y - 1; y > 0; y-- {
@@ -61,7 +61,7 @@ func (dc *drawContext) draw() image.Image {
 			dc.img.SetColorIndex(x+z, y-1, n)
 		}
 	}
-	return dc.img
+	draw.Draw(dst, dst.Bounds(), dc.img, image.ZP, draw.Src)
 }
 
 func (dc *drawContext) update(screen *ebiten.Image) error {
@@ -72,7 +72,7 @@ func (dc *drawContext) update(screen *ebiten.Image) error {
 		dc.toggle()
 	}
 	if !ebiten.IsDrawingSkipped() {
-		draw.Draw(screen, screen.Bounds(), dc.draw(), image.ZP, draw.Src)
+		dc.drawTo(screen)
 	}
 	return nil
 }
