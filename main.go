@@ -41,12 +41,11 @@ func seed(img *image.Paletted, c int) {
 }
 
 func (dc *drawContext) toggle() {
-	dc.off = !dc.off
-	if dc.off {
-		seed(dc.img, dc.black)
-	} else {
-		seed(dc.img, dc.white)
+	color := dc.white
+	if dc.off = !dc.off; dc.off {
+		color = dc.black
 	}
+	seed(dc.img, color)
 }
 
 func (dc *drawContext) drawTo(dst draw.Image) {
