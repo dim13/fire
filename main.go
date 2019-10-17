@@ -9,6 +9,8 @@ import (
 	"image/draw"
 	"log"
 	"math/rand"
+	"os"
+	"runtime/pprof"
 	"time"
 
 	"github.com/hajimehoshi/ebiten"
@@ -80,11 +82,21 @@ func main() {
 	width := flag.Int("width", 320, "screen width")
 	height := flag.Int("height", 200, "screen height")
 	scale := flag.Float64("scale", 2.0, "scale")
+	profile := flag.String("profile", "", "CPU Profile")
 	flag.Parse()
+
+	if *profile != "" {
+		f, err := os.Create(*profile)
+		if err != nil {
+			log.Fatal(err)
+		}
+		pprof.StartCPUProfile(f)
+		defer pprof.StopCPUProfile()
+	}
 
 	dc := newDrawContext(*width, *height)
 	ebiten.SetRunnableInBackground(true)
 	if err := ebiten.Run(dc.update, *width, *height, *scale, "Fire"); err != nil {
-		log.Fatal(err)
+		log.Println(err)
 	}
 }
