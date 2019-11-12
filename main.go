@@ -20,6 +20,7 @@ import (
 type drawContext struct {
 	img   *image.Paletted
 	off   bool
+	gray  bool
 	black int
 	white int
 }
@@ -42,7 +43,15 @@ func seed(img *image.Paletted, c int) {
 	}
 }
 
-func (dc *drawContext) toggle() {
+func (dc *drawContext) toggleGray() {
+	p := palette
+	if dc.gray = !dc.gray; dc.gray {
+		p = toGray(p)
+	}
+	dc.img.Palette = p
+}
+
+func (dc *drawContext) toggleOff() {
 	color := dc.white
 	if dc.off = !dc.off; dc.off {
 		color = dc.black
@@ -69,8 +78,10 @@ func (dc *drawContext) update(screen *ebiten.Image) error {
 	switch {
 	case inpututil.IsKeyJustPressed(ebiten.KeyQ):
 		return errors.New("exit")
+	case inpututil.IsKeyJustPressed(ebiten.KeyG):
+		dc.toggleGray()
 	case inpututil.IsKeyJustPressed(ebiten.KeySpace):
-		dc.toggle()
+		dc.toggleOff()
 	}
 	if !ebiten.IsDrawingSkipped() {
 		dc.drawTo(screen)
