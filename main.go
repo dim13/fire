@@ -4,7 +4,6 @@ package main
 
 import (
 	"errors"
-	"flag"
 	"image"
 	"image/draw"
 	"log"
@@ -21,6 +20,7 @@ type drawContext struct {
 	gray  bool
 	black int
 	white int
+	x, y  int
 }
 
 func newDrawContext(x, y int) *drawContext {
@@ -29,6 +29,8 @@ func newDrawContext(x, y int) *drawContext {
 		img:   image.NewPaletted(image.Rect(0, 0, x, y), palette),
 		black: 0,
 		white: len(palette) - 1,
+		x:     x,
+		y:     y,
 	}
 	seed(dc.img, dc.white)
 	return &dc
@@ -72,7 +74,7 @@ func (dc *drawContext) drawTo(dst draw.Image) {
 	draw.Draw(dst, dst.Bounds(), dc.img, image.ZP, draw.Src)
 }
 
-func (dc *drawContext) update(screen *ebiten.Image) error {
+func (dc *drawContext) Update(screen *ebiten.Image) error {
 	switch {
 	case inpututil.IsKeyJustPressed(ebiten.KeyQ):
 		return errors.New("exit")
@@ -87,15 +89,16 @@ func (dc *drawContext) update(screen *ebiten.Image) error {
 	return nil
 }
 
-func main() {
-	width := flag.Int("width", 320, "screen width")
-	height := flag.Int("height", 200, "screen height")
-	scale := flag.Float64("scale", 2.0, "scale")
-	flag.Parse()
+func (dc *drawContext) Layout(outsideWidth, outsideHeight int) (int, int) {
+	return dc.x, dc.y
+}
 
-	dc := newDrawContext(*width, *height)
+func main() {
+	dc := newDrawContext(320, 200)
+	ebiten.SetWindowSize(640, 400)
+	ebiten.SetWindowTitle("Fire")
 	ebiten.SetRunnableInBackground(true)
-	if err := ebiten.Run(dc.update, *width, *height, *scale, "Fire"); err != nil {
+	if err := ebiten.RunGame(dc); err != nil {
 		log.Println(err)
 	}
 }
