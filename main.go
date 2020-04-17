@@ -14,7 +14,7 @@ import (
 	"github.com/hajimehoshi/ebiten/inpututil"
 )
 
-type Fire struct {
+type fire struct {
 	img   *image.Paletted
 	off   bool
 	gray  bool
@@ -23,9 +23,9 @@ type Fire struct {
 	x, y  int
 }
 
-func newFire(x, y int) *Fire {
+func newFire(x, y int) *fire {
 	rand.Seed(time.Now().UnixNano())
-	f := Fire{
+	f := fire{
 		img:   image.NewPaletted(image.Rect(0, 0, x, y), palette),
 		black: 0,
 		white: len(palette) - 1,
@@ -43,7 +43,7 @@ func seed(img *image.Paletted, c int) {
 	}
 }
 
-func (f *Fire) toggleGray() {
+func (f *fire) toggleGray() {
 	p := palette
 	if f.gray = !f.gray; f.gray {
 		p = toGray(p)
@@ -51,7 +51,7 @@ func (f *Fire) toggleGray() {
 	f.img.Palette = p
 }
 
-func (f *Fire) toggleOff() {
+func (f *fire) toggleOff() {
 	color := f.white
 	if f.off = !f.off; f.off {
 		color = f.black
@@ -59,7 +59,7 @@ func (f *Fire) toggleOff() {
 	seed(f.img, color)
 }
 
-func (f *Fire) Update(screen *ebiten.Image) error {
+func (f *fire) Update(screen *ebiten.Image) error {
 	switch {
 	case inpututil.IsKeyJustPressed(ebiten.KeyQ):
 		return errors.New("exit")
@@ -82,11 +82,11 @@ func (f *Fire) Update(screen *ebiten.Image) error {
 	return nil
 }
 
-func (f *Fire) Draw(screen *ebiten.Image) {
+func (f *fire) Draw(screen *ebiten.Image) {
 	draw.Draw(screen, screen.Bounds(), f.img, image.Point{}, draw.Src)
 }
 
-func (f *Fire) Layout(outsideWidth, outsideHeight int) (int, int) {
+func (f *fire) Layout(outsideWidth, outsideHeight int) (int, int) {
 	return f.x, f.y
 }
 
