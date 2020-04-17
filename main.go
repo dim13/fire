@@ -14,7 +14,7 @@ import (
 	"github.com/hajimehoshi/ebiten/inpututil"
 )
 
-type drawContext struct {
+type Fire struct {
 	img   *image.Paletted
 	off   bool
 	gray  bool
@@ -23,17 +23,17 @@ type drawContext struct {
 	x, y  int
 }
 
-func newDrawContext(x, y int) *drawContext {
+func newFire(x, y int) *Fire {
 	rand.Seed(time.Now().UnixNano())
-	dc := drawContext{
+	f := Fire{
 		img:   image.NewPaletted(image.Rect(0, 0, x, y), palette),
 		black: 0,
 		white: len(palette) - 1,
 		x:     x,
 		y:     y,
 	}
-	seed(dc.img, dc.white)
-	return &dc
+	seed(f.img, f.white)
+	return &f
 }
 
 func seed(img *image.Paletted, c int) {
@@ -43,62 +43,60 @@ func seed(img *image.Paletted, c int) {
 	}
 }
 
-func (dc *drawContext) toggleGray() {
+func (f *Fire) toggleGray() {
 	p := palette
-	if dc.gray = !dc.gray; dc.gray {
+	if f.gray = !f.gray; f.gray {
 		p = toGray(p)
 	}
-	dc.img.Palette = p
+	f.img.Palette = p
 }
 
-func (dc *drawContext) toggleOff() {
-	color := dc.white
-	if dc.off = !dc.off; dc.off {
-		color = dc.black
+func (f *Fire) toggleOff() {
+	color := f.white
+	if f.off = !f.off; f.off {
+		color = f.black
 	}
-	seed(dc.img, color)
+	seed(f.img, color)
 }
 
-func (dc *drawContext) drawTo(dst draw.Image) {
-	r := dc.img.Bounds().Max
-	for x := 0; x < r.X; x++ {
-		for y := r.Y - 1; y > 0; y-- {
-			z := rand.Intn(3) - 1 // -1, 0, 1
-			n := dc.img.ColorIndexAt(x, y)
-			if n > 0 && z == 0 {
-				n-- // next color
-			}
-			dc.img.SetColorIndex(x+z, y-1, n)
-		}
-	}
-	draw.Draw(dst, dst.Bounds(), dc.img, image.ZP, draw.Src)
-}
-
-func (dc *drawContext) Update(screen *ebiten.Image) error {
+func (f *Fire) Update(screen *ebiten.Image) error {
 	switch {
 	case inpututil.IsKeyJustPressed(ebiten.KeyQ):
 		return errors.New("exit")
 	case inpututil.IsKeyJustPressed(ebiten.KeyG):
-		dc.toggleGray()
+		f.toggleGray()
 	case inpututil.IsKeyJustPressed(ebiten.KeySpace):
-		dc.toggleOff()
+		f.toggleOff()
 	}
-	if !ebiten.IsDrawingSkipped() {
-		dc.drawTo(screen)
+	r := f.img.Bounds().Max
+	for x := 0; x < r.X; x++ {
+		for y := r.Y - 1; y > 0; y-- {
+			z := rand.Intn(3) - 1 // -1, 0, 1
+			n := f.img.ColorIndexAt(x, y)
+			if n > 0 && z == 0 {
+				n-- // next color
+			}
+			f.img.SetColorIndex(x+z, y-1, n)
+		}
 	}
 	return nil
 }
 
-func (dc *drawContext) Layout(outsideWidth, outsideHeight int) (int, int) {
-	return dc.x, dc.y
+func (f *Fire) Draw(screen *ebiten.Image) {
+	draw.Draw(screen, screen.Bounds(), f.img, image.Point{}, draw.Src)
+}
+
+func (f *Fire) Layout(outsideWidth, outsideHeight int) (int, int) {
+	return f.x, f.y
 }
 
 func main() {
-	dc := newDrawContext(320, 200)
+	f := newFire(320, 200)
 	ebiten.SetWindowSize(640, 400)
 	ebiten.SetWindowTitle("Fire")
+	ebiten.SetWindowResizable(true)
 	ebiten.SetRunnableInBackground(true)
-	if err := ebiten.RunGame(dc); err != nil {
+	if err := ebiten.RunGame(f); err != nil {
 		log.Println(err)
 	}
 }
