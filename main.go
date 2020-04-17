@@ -59,7 +59,7 @@ func (f *fire) toggleOff() {
 	seed(f.img, color)
 }
 
-func (f *fire) Update(screen *ebiten.Image) error {
+func (f *fire) input() error {
 	switch {
 	case inpututil.IsKeyJustPressed(ebiten.KeyQ):
 		return errors.New("exit")
@@ -68,6 +68,10 @@ func (f *fire) Update(screen *ebiten.Image) error {
 	case inpututil.IsKeyJustPressed(ebiten.KeySpace):
 		f.toggleOff()
 	}
+	return nil
+}
+
+func (f *fire) Update(screen *ebiten.Image) error {
 	r := f.img.Bounds().Max
 	for x := 0; x < r.X; x++ {
 		for y := r.Y - 1; y > 0; y-- {
@@ -79,7 +83,7 @@ func (f *fire) Update(screen *ebiten.Image) error {
 			f.img.SetColorIndex(x+z, y-1, n)
 		}
 	}
-	return nil
+	return f.input()
 }
 
 func (f *fire) Draw(screen *ebiten.Image) {
