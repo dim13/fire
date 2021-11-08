@@ -41,7 +41,7 @@ var palette = color.Palette{
 	color.RGBA{0xff, 0xff, 0xff, 0xff},
 }
 
-func toGray(p color.Palette) color.Palette {
+func gray(p color.Palette) color.Palette {
 	g := make(color.Palette, len(p))
 	for i, c := range p {
 		g[i] = color.GrayModel.Convert(c)

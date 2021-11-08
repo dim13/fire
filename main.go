@@ -38,7 +38,7 @@ func newFire(x, y int) *fire {
 			Off: func() { seed(img, len(palette)-1) },
 		},
 		gray: Toggle{
-			On:  func() { img.Palette = toGray(palette) },
+			On:  func() { img.Palette = gray(palette) },
 			Off: func() { img.Palette = palette },
 		},
 	}
