@@ -10,8 +10,8 @@ import (
 	"math/rand"
 	"time"
 
-	"github.com/hajimehoshi/ebiten"
-	"github.com/hajimehoshi/ebiten/inpututil"
+	"github.com/hajimehoshi/ebiten/v2"
+	"github.com/hajimehoshi/ebiten/v2/inpututil"
 )
 
 type fire struct {
@@ -71,7 +71,7 @@ func (f *fire) input() error {
 	return nil
 }
 
-func (f *fire) Update(screen *ebiten.Image) error {
+func (f *fire) Update() error {
 	r := f.img.Bounds().Max
 	for x := 0; x < r.X; x++ {
 		for y := r.Y - 1; y > 0; y-- {
@@ -98,8 +98,6 @@ func main() {
 	f := newFire(320, 200)
 	ebiten.SetWindowSize(640, 400)
 	ebiten.SetWindowTitle("Fire")
-	ebiten.SetWindowResizable(true)
-	ebiten.SetRunnableInBackground(true)
 	if err := ebiten.RunGame(f); err != nil {
 		log.Println(err)
 	}
