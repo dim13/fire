@@ -44,6 +44,20 @@ func newFire(x, y int) *fire {
 	}
 }
 
+func Draw(img *image.Paletted) {
+	p := img.Bounds().Max
+	for x := 0; x < p.X; x++ {
+		for y := p.Y - 1; y > 0; y-- {
+			z := rand.Intn(3) - 1 // -1, 0, 1
+			n := img.ColorIndexAt(x, y)
+			if n > 0 && z == 0 {
+				n-- // next color
+			}
+			img.SetColorIndex(x+z, y-1, n)
+		}
+	}
+}
+
 func (f *fire) Draw(screen *ebiten.Image) {
 	draw.Draw(screen, screen.Bounds(), f.img, image.Point{}, draw.Src)
 }
@@ -54,17 +68,7 @@ func (f *fire) Layout(outsideWidth, outsideHeight int) (int, int) {
 }
 
 func (f *fire) Update() error {
-	p := f.img.Bounds().Max
-	for x := 0; x < p.X; x++ {
-		for y := p.Y - 1; y > 0; y-- {
-			z := rand.Intn(3) - 1 // -1, 0, 1
-			n := f.img.ColorIndexAt(x, y)
-			if n > 0 && z == 0 {
-				n-- // next color
-			}
-			f.img.SetColorIndex(x+z, y-1, n)
-		}
-	}
+	Draw(f.img)
 	switch {
 	case inpututil.IsKeyJustPressed(ebiten.KeyQ):
 		return errors.New("exit")
