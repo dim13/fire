@@ -36,8 +36,18 @@ func (f *Fire) Update() error {
 		f.gray.Toggle()
 	case inpututil.IsKeyJustPressed(ebiten.KeySpace):
 		f.off.Toggle()
+	case inpututil.IsKeyJustPressed(ebiten.KeyR):
+		SeedRnd(f.img, len(palette)-1)
 	}
 	return nil
+}
+
+func SeedRnd(img *image.Paletted, n int) {
+	p := img.Bounds().Max
+	for x := 0; x < p.X; x++ {
+		c := rand.Intn(n)
+		img.SetColorIndex(x, p.Y-1, uint8(c))
+	}
 }
 
 func Seed(img *image.Paletted, c int) {
