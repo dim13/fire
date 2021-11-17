@@ -6,9 +6,7 @@ import (
 	"errors"
 	"image"
 	"image/draw"
-	"log"
 	"math/rand"
-	"time"
 
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/inpututil"
@@ -64,7 +62,7 @@ func Draw(img *image.Paletted) {
 }
 
 func New(x, y int) *Fire {
-	rand.Seed(time.Now().UnixNano())
+	rand.Seed(cryptoSeed())
 	img := image.NewPaletted(image.Rect(0, 0, x, y), palette)
 	Seed(img, len(palette)-1)
 	return &Fire{
@@ -82,7 +80,5 @@ func New(x, y int) *Fire {
 
 func main() {
 	ebiten.SetWindowTitle("Doom Fire")
-	if err := ebiten.RunGame(New(320, 240)); err != nil {
-		log.Println(err)
-	}
+	ebiten.RunGame(New(320, 240))
 }
