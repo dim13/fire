@@ -5,8 +5,7 @@ import (
 	"encoding/binary"
 )
 
-func cryptoSeed() int64 {
-	var x int64
+func cryptoSeed() (x int64) {
 	binary.Read(rand.Reader, binary.LittleEndian, &x)
-	return x
+	return
 }

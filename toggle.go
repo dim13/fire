@@ -1,16 +1,16 @@
 package main
 
 type Toggle struct {
-	state bool
-	On    func()
-	Off   func()
+	on  bool
+	On  func()
+	Off func()
 }
 
 func (t *Toggle) Toggle() {
-	t.state = !t.state
-	if t.state {
+	switch t.on = !t.on; t.on {
+	case true:
 		t.On()
-	} else {
+	case false:
 		t.Off()
 	}
 }
