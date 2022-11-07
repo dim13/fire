@@ -2,15 +2,14 @@ module github.com/dim13/fire
 
 go 1.19
 
-require github.com/hajimehoshi/ebiten/v2 v2.4.15
+require github.com/faiface/pixel v0.10.0
 
 require (
-	github.com/ebitengine/purego v0.1.1 // indirect
+	github.com/faiface/glhf v0.0.0-20211013000516-57b20770c369 // indirect
+	github.com/faiface/mainthread v0.0.0-20171120011319-8b78f0a41ae3 // indirect
+	github.com/go-gl/gl v0.0.0-20211210172815-726fda9656d6 // indirect
 	github.com/go-gl/glfw/v3.3/glfw v0.0.0-20221017161538-93cebf72946b // indirect
-	github.com/hajimehoshi/file2byteslice v1.0.0 // indirect
-	github.com/jezek/xgb v1.1.0 // indirect
-	golang.org/x/exp/shiny v0.0.0-20230108222341-4b8118a2686a // indirect
+	github.com/go-gl/mathgl v1.0.0 // indirect
+	github.com/pkg/errors v0.9.1 // indirect
 	golang.org/x/image v0.3.0 // indirect
-	golang.org/x/mobile v0.0.0-20221110043201-43a038452099 // indirect
-	golang.org/x/sys v0.4.0 // indirect
 )

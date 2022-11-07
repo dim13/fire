@@ -3,37 +3,34 @@
 package main
 
 import (
-	"errors"
-	"image"
-	"image/draw"
-
-	"github.com/hajimehoshi/ebiten/v2"
-	"github.com/hajimehoshi/ebiten/v2/inpututil"
+	"github.com/faiface/pixel"
+	"github.com/faiface/pixel/pixelgl"
 )
 
-type Game struct {
-	*Fire
-}
-
-func (g *Game) Draw(screen *ebiten.Image) {
-	draw.Draw(screen, screen.Bounds(), g, image.Point{}, draw.Src)
-}
-
-func (g *Game) Layout(outsideWidth, outsideHeight int) (int, int) {
-	p := g.Bounds().Max
-	return p.X, p.Y
-}
-
-func (g *Game) Update() error {
-	g.Next()
-	switch {
-	case inpututil.IsKeyJustPressed(ebiten.KeyQ):
-		return errors.New("exit")
-	}
-	return nil
-}
-
 func main() {
-	ebiten.SetWindowTitle("Doom Fire")
-	ebiten.RunGame(&Game{NewFire(320, 240, palette)})
+	w, h := 320, 200
+	cfg := pixelgl.WindowConfig{
+		Title:  "Doom Fire",
+		Bounds: pixel.R(0, 0, float64(w), float64(h)),
+		VSync:  true,
+	}
+	fire := NewFire(w, h, palette)
+	pixelgl.Run(func() {
+		win, err := pixelgl.NewWindow(cfg)
+		if err != nil {
+			panic(err)
+		}
+		for !win.Closed() {
+			fire.Next()
+			switch {
+			case win.JustPressed(pixelgl.KeyQ):
+				return
+			}
+			p := pixel.PictureDataFromImage(fire)
+			s := pixel.NewSprite(p, p.Bounds())
+			m := pixel.IM.Moved(win.Bounds().Center())
+			s.Draw(win, m)
+			win.Update()
+		}
+	})
 }
