@@ -3,37 +3,49 @@
 package main
 
 import (
-	"errors"
 	"image"
-	"image/draw"
+	"time"
 
-	"github.com/hajimehoshi/ebiten/v2"
-	"github.com/hajimehoshi/ebiten/v2/inpututil"
+	"fyne.io/fyne/v2"
+	"fyne.io/fyne/v2/app"
+	"fyne.io/fyne/v2/canvas"
+	"fyne.io/fyne/v2/widget"
 )
 
-type Game struct {
+type fire struct {
+	widget.BaseWidget
 	*Fire
+	raster *canvas.Raster
 }
 
-func (g *Game) Draw(screen *ebiten.Image) {
-	draw.Draw(screen, screen.Bounds(), g, image.Point{}, draw.Src)
+func newWidget(f *Fire) *fire {
+	w := &fire{Fire: f}
+	w.raster = canvas.NewRaster(w.draw)
+	w.ExtendBaseWidget(w)
+	return w
 }
 
-func (g *Game) Layout(outsideWidth, outsideHeight int) (int, int) {
-	p := g.Bounds().Max
-	return p.X, p.Y
+func (f *fire) draw(w, h int) image.Image {
+	return f.Fire
 }
 
-func (g *Game) Update() error {
-	g.Next()
-	switch {
-	case inpututil.IsKeyJustPressed(ebiten.KeyQ):
-		return errors.New("exit")
-	}
-	return nil
+func (f *fire) CreateRenderer() fyne.WidgetRenderer {
+	return widget.NewSimpleRenderer(f.raster)
 }
 
 func main() {
-	ebiten.SetWindowTitle("Doom Fire")
-	ebiten.RunGame(&Game{NewFire(320, 240, palette)})
+	a := app.New()
+	w := a.NewWindow("Doom Fire")
+	f := newWidget(NewFire(320, 200, palette))
+	w.SetContent(f)
+	w.Resize(fyne.NewSize(320, 200))
+	go func() {
+		t := time.NewTicker(time.Second / 50)
+		defer t.Stop()
+		for range t.C {
+			f.Next()
+			f.Refresh()
+		}
+	}()
+	w.ShowAndRun()
 }
