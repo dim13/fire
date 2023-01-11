@@ -7,13 +7,12 @@ import (
 )
 
 func main() {
-	w, h := 320, 200
 	cfg := pixelgl.WindowConfig{
 		Title:  "Doom Fire",
-		Bounds: pixel.R(0, 0, float64(w), float64(h)),
+		Bounds: pixel.R(0, 0, 320, 200),
 		VSync:  true,
 	}
-	f := fire.New(w, h, fire.Palette)
+	f := fire.New(320, 200)
 	pixelgl.Run(func() {
 		win, err := pixelgl.NewWindow(cfg)
 		if err != nil {

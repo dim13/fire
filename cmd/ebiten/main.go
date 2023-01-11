@@ -34,5 +34,5 @@ func (g *Game) Update() error {
 
 func main() {
 	ebiten.SetWindowTitle("Doom Fire")
-	ebiten.RunGame(&Game{fire.New(320, 240, fire.Palette)})
+	ebiten.RunGame(&Game{fire.New(320, 240)})
 }

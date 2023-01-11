@@ -35,7 +35,7 @@ func (f *gc) CreateRenderer() fyne.WidgetRenderer {
 func main() {
 	a := app.New()
 	w := a.NewWindow("Doom Fire")
-	f := newWidget(fire.New(320, 200, fire.Palette))
+	f := newWidget(fire.New(320, 200))
 	w.SetContent(f)
 	w.Resize(fyne.NewSize(320, 200))
 	go func() {
