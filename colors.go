@@ -1,8 +1,8 @@
-package main
+package fire
 
 import "image/color"
 
-var palette = color.Palette{
+var Palette = color.Palette{
 	color.RGBA{0x07, 0x07, 0x07, 0xff},
 	color.RGBA{0x1f, 0x07, 0x07, 0xff},
 	color.RGBA{0x2f, 0x0f, 0x07, 0xff},
