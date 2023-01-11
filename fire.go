@@ -1,4 +1,6 @@
-package main
+// http://fabiensanglard.net/doom_fire_psx/
+
+package fire
 
 import (
 	"image"
@@ -10,7 +12,7 @@ type Fire struct {
 	*image.Paletted
 }
 
-func NewFire(w, h int, p color.Palette) *Fire {
+func New(w, h int, p color.Palette) *Fire {
 	r := image.Rect(0, 0, w, h)
 	img := image.NewPaletted(r, p)
 	b := r.Bounds().Max

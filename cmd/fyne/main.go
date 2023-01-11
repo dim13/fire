@@ -1,5 +1,3 @@
-// http://fabiensanglard.net/doom_fire_psx/
-
 package main
 
 import (
@@ -10,33 +8,34 @@ import (
 	"fyne.io/fyne/v2/app"
 	"fyne.io/fyne/v2/canvas"
 	"fyne.io/fyne/v2/widget"
+	"github.com/dim13/fire"
 )
 
-type fire struct {
+type gc struct {
 	widget.BaseWidget
-	*Fire
+	*fire.Fire
 	raster *canvas.Raster
 }
 
-func newWidget(f *Fire) *fire {
-	w := &fire{Fire: f}
+func newWidget(f *fire.Fire) *gc {
+	w := &gc{Fire: f}
 	w.raster = canvas.NewRaster(w.draw)
 	w.ExtendBaseWidget(w)
 	return w
 }
 
-func (f *fire) draw(w, h int) image.Image {
+func (f *gc) draw(w, h int) image.Image {
 	return f.Fire
 }
 
-func (f *fire) CreateRenderer() fyne.WidgetRenderer {
+func (f *gc) CreateRenderer() fyne.WidgetRenderer {
 	return widget.NewSimpleRenderer(f.raster)
 }
 
 func main() {
 	a := app.New()
 	w := a.NewWindow("Doom Fire")
-	f := newWidget(NewFire(320, 200, palette))
+	f := newWidget(fire.New(320, 200, fire.Palette))
 	w.SetContent(f)
 	w.Resize(fyne.NewSize(320, 200))
 	go func() {
