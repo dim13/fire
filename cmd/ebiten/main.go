@@ -7,12 +7,13 @@ import (
 	"image"
 	"image/draw"
 
+	"github.com/dim13/fire"
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/inpututil"
 )
 
 type Game struct {
-	*Fire
+	*fire.Fire
 }
 
 func (g *Game) Draw(screen *ebiten.Image) {
@@ -35,5 +36,5 @@ func (g *Game) Update() error {
 
 func main() {
 	ebiten.SetWindowTitle("Doom Fire")
-	ebiten.RunGame(&Game{NewFire(320, 240, palette)})
+	ebiten.RunGame(&Game{fire.New(320, 240, fire.Palette)})
 }
