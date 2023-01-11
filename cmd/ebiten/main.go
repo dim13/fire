@@ -1,5 +1,3 @@
-// http://fabiensanglard.net/doom_fire_psx/
-
 package main
 
 import (
