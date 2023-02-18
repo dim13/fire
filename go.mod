@@ -40,9 +40,9 @@ require (
 	golang.org/x/exp/shiny v0.0.0-20230108222341-4b8118a2686a // indirect
 	golang.org/x/image v0.3.0 // indirect
 	golang.org/x/mobile v0.0.0-20221110043201-43a038452099 // indirect
-	golang.org/x/net v0.5.0 // indirect
-	golang.org/x/sys v0.4.0 // indirect
-	golang.org/x/text v0.6.0 // indirect
+	golang.org/x/net v0.7.0 // indirect
+	golang.org/x/sys v0.5.0 // indirect
+	golang.org/x/text v0.7.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 	honnef.co/go/js/dom v0.0.0-20221001195520-26252dedbe70 // indirect
 )
