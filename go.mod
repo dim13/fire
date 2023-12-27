@@ -7,9 +7,12 @@ require (
 	github.com/faiface/pixel v0.10.0
 	github.com/hajimehoshi/ebiten/v2 v2.6.3
 	github.com/zserge/fenster v0.0.0-20231113144338-92aa0ecd30f1
+	golang.org/x/exp/shiny v0.0.0-20231110203233-9a3e6036ecaa
+	golang.org/x/mobile v0.0.0-20231108233038-35478a0c49da
 )
 
 require (
+	dmitri.shuralyov.com/gpu/mtl v0.0.0-20221208032759-85de2813cf6b // indirect
 	fyne.io/systray v1.10.1-0.20231115130155-104f5ef7839e // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/ebitengine/purego v0.5.1 // indirect
@@ -36,9 +39,7 @@ require (
 	github.com/stretchr/testify v1.8.4 // indirect
 	github.com/tevino/abool v1.2.0 // indirect
 	github.com/yuin/goldmark v1.6.0 // indirect
-	golang.org/x/exp/shiny v0.0.0-20231110203233-9a3e6036ecaa // indirect
 	golang.org/x/image v0.14.0 // indirect
-	golang.org/x/mobile v0.0.0-20231108233038-35478a0c49da // indirect
 	golang.org/x/net v0.18.0 // indirect
 	golang.org/x/sync v0.5.0 // indirect
 	golang.org/x/sys v0.14.0 // indirect
