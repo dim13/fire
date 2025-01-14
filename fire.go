@@ -16,7 +16,7 @@ func New(w, h int) *Fire {
 	r := image.Rect(0, 0, w, h)
 	img := image.NewPaletted(r, palette)
 	b := r.Bounds().Max
-	for x := 0; x < b.X; x++ {
+	for x := range b.X {
 		img.SetColorIndex(x, b.Y-1, uint8(len(palette)-1))
 	}
 	return &Fire{Paletted: img}
@@ -24,8 +24,8 @@ func New(w, h int) *Fire {
 
 func (f *Fire) Next() {
 	b := f.Bounds().Max
-	for x := 0; x < b.X; x++ {
-		for y := b.Y - 1; y > 0; y-- {
+	for x := range b.X {
+		for y := range b.Y {
 			z := rand.Intn(3) - 1 // -1, 0, 1
 			n := f.ColorIndexAt(x, y)
 			if n > 0 && z == 0 {
